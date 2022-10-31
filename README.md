@@ -2,12 +2,13 @@
 - (tipos básicos: variáveis, condicionais, loops e funções)
 
 ```python 
+BLOCK     = "{", {STATEMENT}, "}";
+STATEMENT = (λ | VARIABLE_DECLARATION | ASSIGNMENT | PRINT | IF | WHILE | BLOCK | FUNCCAL | FUNCDEF), ";";
+
 FUNCDEF   = PARAM, "(", {PARAM ","}, ")", BLOCK;
 FUNCCALL  = IDENTIFIER, "(", {OREXPR ","}, ")";
 PARAM     = TYPE, IDENTIFIER;
 
-BLOCK     = "{", {STATEMENT}, "}";
-STATEMENT = (λ | VARIABLE_DECLARATION | ASSIGNMENT | PRINT | IF | WHILE | BLOCK | FUNCCAL | FUNCDEF), ";";
 
 VARIABLE_DECLARATION = (TYPE, IDENTIFIER, "=", EXPR) |
                        (TYPE, IDENTIFIER );
