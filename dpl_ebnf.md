@@ -1,5 +1,5 @@
 # EBNF
-- (tipos básicos: variáveis, condicionais, loops e funções)
+menas (tipos básicos: variáveis, condicionais, loops e funções)
 
 ```python 
 BLOCK     = "{", {STATEMENT}, "}";
