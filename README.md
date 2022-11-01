@@ -39,3 +39,22 @@ LETTER = (a | ... | z | A | ... | Z) ;
 DIGIT  = (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 );
 ```
 
+Code example:
+```text
+
+    # Func 1
+
+    a recebe 'hello world' cambioDesligo
+    seForVerdade (a ehIgualzinho '123') {
+        mostra('Acertou') cambioDesligo
+    }
+    casoContrario {
+        mostra('Errou') cambioDesligo
+    }
+
+    contador recebe 0 cambioDesligo
+    enquanto (verdadeVerdadeira):
+        contador recebe contador soma 1cambioDesligo
+    mostra(contador) cambioDesligo
+    
+```
