@@ -8,7 +8,7 @@ TRANSLATOR_EBNF = {
     '=='   : 'ehIgualzinho',
     '"="'  : '"recebe"',
     '+'    : 'soma',
-    '-'    : 'menas',
+    '-'    : 'menos',
     '*'    : 'vezes',
     '/'    : 'dividido',
     '&&'   : 'ee',
@@ -22,7 +22,8 @@ TRANSLATOR_EBNF = {
     'false' : 'mentira',
     'int'   : 'inteiro',
     'float' : 'pedaco',
-    'bool'  : 'simOuNao'
+    'bool'  : 'simOuNao',
+    'return': 'devolve'
 }
 
 
@@ -36,7 +37,7 @@ TRANSLATOR_CODE = {
     '=='   : 'ehIgualzinho',
     '='    : 'recebe',
     '+'    : 'soma',
-    '-'    : 'menas',
+    '-'    : 'menos',
     '*'    : 'vezes',
     '/'    : 'dividido',
     '&&'   : 'ee',
@@ -49,7 +50,7 @@ TRANSLATOR_CODE = {
     'true'  : 'verdadeVerdadeira',
     'false' : 'mentira',
     'int'   : 'inteiro',
-    'float' : 'pedaco',
+    'float' : 'quebrado',
     'bool'  : 'simOuNao'
 }
 
@@ -102,6 +103,50 @@ def translate_ebnf():
     text = translate(text, TRANSLATOR_EBNF)
     with open('dpl_ebnf.md', 'w') as f:
         f.writelines(text)
+
+def manual_t():
+    text = '''
+"/*"		{ comment(); }
+"if"		{ count(); returntoken(IF); }
+"else"		{ count(); returntoken(ELSE); }
+"||"		{ count(); returntoken(BOOL_OR_OP); }
+"<="		{ count(); returntoken(LE_OP); }
+">="		{ count(); returntoken(GE_OP); }
+"=="		{ count(); returntoken(EQ_OP); }
+"="			{ count(); returntoken(ASSIGN); }
+"-"			{ count(); returntoken(MINUS); }
+"+"			{ count(); returntoken(PLUS); }
+"*"			{ count(); returntoken(STAR); }
+"/"			{ count(); returntoken(SLASH); }
+"<"			{ count(); returntoken(LT_OP); }
+">"			{ count(); returntoken(GT_OP); }
+"&&"		{ count(); returntoken(AND_OP); }
+"!"			{ count(); returntoken(BANG); }
+
+"{"     	{ count(); returntoken(LBRACE); }
+"}"     	{ count(); returntoken(RBRACE); }
+"("			{ count(); returntoken(LPAREN); }
+")"			{ count(); returntoken(RPAREN); }
+"["      	{ count(); returntoken(LBRACKET); }
+"]"      	{ count(); returntoken(RBRACKET); }
+","			{ count(); returntoken(COMMA); }
+":"			{ count(); returntoken(COLON); }
+
+"int"		{ count(); returntoken(INT); }
+"return"	{ count(); returntoken(RETURN); }
+"while"	{ count(); returntoken(WHILE); }
+"print"	{ count(); returntoken(PRINT); }
+"func"	{ count(); returntoken(FUNC); }
+"float"	{ count(); returntoken(FLOAT); }
+"int"	{ count(); returntoken(INT); }
+"bool"	{ count(); returntoken(BOOL); }
+"false"	{ count(); returntoken(FALSE); }
+"true"	{ count(); returntoken(TRUE); }
+";"	    { count(); returntoken(SEMICOLON); }
+    '''
+    text = translate(text, TRANSLATOR_EBNF)
+    print('\n----------\n', text, '\n\n')
+
 
 if __name__ =='__main__':
     translate_ebnf()
