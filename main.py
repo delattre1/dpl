@@ -38,9 +38,42 @@ TT_COLON      = 'COLON'
 TT_CONCAT     = 'CONCAT'
 TT_ARROW      = 'ARROW'
 
-TT_TYPE_I32 = 'i32'
 
-KEYWORDS = ['Print', 'Read', 'if', 'else', 'while', 'var', TT_TYPE_I32, 'String', 'fn', 'return']
+# FRUITS LANGUAGE 
+KW_I32  = 'i32'
+KW_STR  = 'String'
+KW_VAR  = 'ingrediente'
+KW_READ = 'entrada'
+KW_IF   = 'se'
+KW_ELSE = 'casoContrario'
+KW_PRINT    = 'mostra'
+KW_WHILE    = 'enquanto'
+KW_FUNCTION = 'receita'
+KW_RETURN   = 'resultado'
+
+KEYWORDS = [KW_PRINT, KW_READ, KW_IF, KW_ELSE, KW_WHILE, KW_VAR, KW_I32, KW_STR, KW_FUNCTION, KW_RETURN]
+
+#    'true'  : 'verdadeVerdadeira',
+#    'false' : 'mentira',
+#    'int'   : 'inteiro',
+#    'float' : 'pedaco',
+#    'bool'  : 'simOuNao'
+#}
+
+TRANSPILER_DIC = {
+    'com'                : '+'   ,
+    'sem'                : '-'   ,
+    'multiplicadoPor'    : '*'   ,
+    'divididoPor'        : '/'   ,
+    'temMaisQue'         : '>'   ,
+    'temMenosQue'        : '<'   ,
+    'temMaisOuIgualA'    : '>='  ,
+    'temMenosOuIgualA'   : '<='  ,
+    'ehIgualzinho'       : '=='  ,
+    'recebe'             : '='   ,
+    'EE'                 : '&&'  ,
+    'ouTalvez'           : '||'  ,
+}
 
 #############
 ### TOKEN ###
@@ -74,14 +107,50 @@ class Lexer:
         self.ALLOWED_NAMES = ALLOWED_VAR_NAMES 
         self.MAX_ALLOWED_DIFFERENT_VARIABLES = 5
 
-
     def advance(self) -> None:
         '''lê o próximo token e atualiza o atributo next'''
         self.pos += 1
         self.current_char = self.source[self.pos] if self.pos < len(self.source) else None
     
-    def handle_translated_fruit_tokens(self, id_str):
-        pass
+    def handle_translated_fruit_tokens(self, id_str) -> Token:
+        # Convert the fruit token, to the original compiler token. Ex: when id_str == 'com' -> token_char == '+'
+        token_char = TRANSPILER_DIC[id_str]
+
+        if token_char == '+':
+            return Token(TT_PLUS)
+
+        elif token_char == '-':
+            return Token(TT_MINUS)
+
+        elif token_char == '=':
+            return Token(TT_EQ)
+
+        elif token_char == '==':
+            return Token(TT_EE)
+
+        elif token_char == '*':
+            return Token(TT_MULT)
+
+        elif token_char == '/':
+            return Token(TT_DIV)
+
+        elif token_char == '!':
+            return Token(TT_NOT)
+
+        elif token_char == '||':
+            return Token(TT_OR)
+
+        elif token_char == '&&':
+            return Token(TT_AND)
+
+        elif token_char == '>':
+            return Token(TT_GT)
+        
+        elif token_char == '<':
+            return Token(TT_LT)
+
+        raise Exception(f"Received unexpected token_char: {token_char}")
+
 
     def make_keyword_or_identifier(self) -> Token:
         id_str = ''
@@ -89,7 +158,11 @@ class Lexer:
             id_str += self.current_char
             self.advance()
 
-        if id_str in KEYWORDS:
+        # Modification so the fruit transpiler works
+        if id_str in TRANSPILER_DIC.keys():
+            return self.handle_translated_fruit_tokens(id_str)
+
+        elif id_str in KEYWORDS:
             tok_type = TT_KEYWORD
         else:
             tok_type = TT_IDENTIFIER
@@ -104,26 +177,6 @@ class Lexer:
                 print(f'One more variable called: {id_str} was found in the Lexer. Current count: {len(self.not_allowed_name_ocurrences)}')
 
         return Token(tok_type, id_str)
-
-    def make_equals(self) -> Token:
-        tok_type = TT_EQ
-        self.advance()
-
-        if self.current_char == '=':
-            tok_type = TT_EE
-            self.advance()
-
-        return Token(tok_type)
-
-    def make_minus_or_arrow(self) -> Token:
-        tok_type = TT_MINUS
-        self.advance()
-        if self.current_char == '>':
-            tok_type = TT_ARROW 
-            self.advance()
-
-        return Token(tok_type)
-
 
     def make_number(self) -> Token:
         num_str = ''
@@ -167,51 +220,14 @@ class Lexer:
             elif self.current_char in '"':
                 tokens.append(self.make_string())
 
-            elif self.current_char == '=':
-                tokens.append(self.make_equals())
-
-            elif self.current_char == '+':
-                tokens.append(Token(TT_PLUS))
-                self.advance()
-
             elif self.current_char == '-':
-                tokens.append(self.make_minus_or_arrow())
-
-            elif self.current_char == '*':
-                tokens.append(Token(TT_MULT))
                 self.advance()
 
-            elif self.current_char == '/':
-                tokens.append(Token(TT_DIV))
-                self.advance()
+                if self.current_char != '>':
+                    raise Exception(f"Expected '>' after '-'. Received: {self.current_char}")
 
-            elif self.current_char == '!':
-                tokens.append(Token(TT_NOT))
                 self.advance()
-
-            elif self.current_char == '|':
-                self.advance()
-                if self.current_char == '|':
-                    tokens.append(Token(TT_OR))
-                    self.advance()
-                else:
-                    raise Exception(f"Expected '|'. Received: {self.current_char}")
-
-            elif self.current_char == '&':
-                self.advance()
-                if self.current_char == '&':
-                    tokens.append(Token(TT_AND))
-                    self.advance()
-                else:
-                    raise Exception(f"Expected '&'. Received: {self.current_char}")
-
-            elif self.current_char == '>':
-                tokens.append(Token(TT_GT))
-                self.advance()
-            
-            elif self.current_char == '<':
-                tokens.append(Token(TT_LT))
-                self.advance()
+                tokens.append(Token(TT_ARROW))
 
             elif self.current_char == '(':
                 tokens.append(Token(TT_LPAREN))
@@ -229,16 +245,16 @@ class Lexer:
                 tokens.append(Token(TT_RCURLY))
                 self.advance()
 
-            elif self.current_char == ';':
-                tokens.append(Token(TT_NEWLINE))
-                self.advance()
-
             elif self.current_char == ',':
                 tokens.append(Token(TT_COMMA))
                 self.advance()
 
             elif self.current_char == ':':
                 tokens.append(Token(TT_COLON))
+                self.advance()
+
+            elif self.current_char == ';':
+                tokens.append(Token(TT_NEWLINE))
                 self.advance()
 
             elif self.current_char == '.':
@@ -398,9 +414,9 @@ class SymbolTable:
 
         # Inicializar variavel sem valor
         elif (var_type) and (not value):
-            if var_type == 'String':
+            if var_type == KW_STR:
                 self.symbols[name] = (var_type, '')
-            elif var_type == TT_TYPE_I32:
+            elif var_type == KW_I32:
                 self.symbols[name] = (var_type, 0)
             elif var_type == 'void':
                 self.symbols[name] = (var_type, None)
@@ -461,8 +477,8 @@ class Parser():
 
     def declaration(self):
         # Procura por token fn
-        if not self.current_tok.matches(TT_KEYWORD, 'fn'):
-            raise Exception(f"Expecting 'fn'. Received: '{self.current_tok}")
+        if not self.current_tok.matches(TT_KEYWORD, KW_FUNCTION):
+            raise Exception(f"Expecting '{KW_FUNCTION}'. Received: '{self.current_tok}")
 
         self.advance() # Consumes fn
 
@@ -487,8 +503,8 @@ class Parser():
                 raise Exception("Expected ':'. Received: '{self.current_tok}'")
             self.advance()
 
-            if not (self.current_tok.matches(TT_KEYWORD, TT_TYPE_I32) or self.current_tok.matches(TT_KEYWORD, 'String')):
-                raise Exception(f"Expected KEYWORD: {TT_TYPE_I32} or 'string'. Received: '{self.current_tok}'")
+            if not (self.current_tok.matches(TT_KEYWORD, KW_I32) or self.current_tok.matches(TT_KEYWORD, KW_STR)):
+                raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
             # self.current_tok.value 
             # TODO TYPE HANDLER
             self.advance()
@@ -507,8 +523,8 @@ class Parser():
                     raise Exception("Expected ':'. Received: '{self.current_tok}'")
                 self.advance()
 
-                if not (self.current_tok.matches(TT_KEYWORD, TT_TYPE_I32) or self.current_tok.matches(TT_KEYWORD, 'String')):
-                    raise Exception(f"Expected KEYWORD: {TT_TYPE_I32} or 'string'. Received: '{self.current_tok}'")
+                if not (self.current_tok.matches(TT_KEYWORD, KW_I32) or self.current_tok.matches(TT_KEYWORD, KW_STR)):
+                    raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
                 # self.current_tok.value 
                 # TODO TYPE HANDLER
                 self.advance()
@@ -525,13 +541,13 @@ class Parser():
         if self.current_tok.type == TT_ARROW:
             self.advance() # Consumes '->'
             # Get function type
-            if not (self.current_tok.matches(TT_KEYWORD, TT_TYPE_I32) or self.current_tok.matches(TT_KEYWORD, 'String')):
-                raise Exception(f"Expected KEYWORD: {TT_TYPE_I32} or 'string'. Received: '{self.current_tok}'")
+            if not (self.current_tok.matches(TT_KEYWORD, KW_I32) or self.current_tok.matches(TT_KEYWORD, KW_STR)):
+                raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
         
             function_return_type = self.current_tok.value 
             self.advance()
         else:
-            function_return_type = TT_TYPE_I32
+            function_return_type = KW_I32
 
         
         node_to_return = self.block()
@@ -563,7 +579,7 @@ class Parser():
 
     def statement(self):
 
-        if self.current_tok.matches(TT_KEYWORD, 'var'):
+        if self.current_tok.matches(TT_KEYWORD, KW_VAR):
             self.advance()
 
             declared_variables = []
@@ -589,16 +605,16 @@ class Parser():
                 raise Exception("Expected colon. Received: '{self.current_tok}'")
             self.advance() # Consumes ':'
 
-            if self.current_tok.matches(TT_KEYWORD, TT_TYPE_I32):
+            if self.current_tok.matches(TT_KEYWORD, KW_I32):
                 self.advance()
-                var_dec_nodes = [VarDeclareNode(var_name=var_name, var_type=TT_TYPE_I32) for var_name in declared_variables]
+                var_dec_nodes = [VarDeclareNode(var_name=var_name, var_type=KW_I32) for var_name in declared_variables]
 
-            elif self.current_tok.matches(TT_KEYWORD, 'String'):
+            elif self.current_tok.matches(TT_KEYWORD, KW_STR):
                 self.advance()
-                var_dec_nodes = [VarDeclareNode(var_name=var_name, var_type='String') for var_name in declared_variables]
+                var_dec_nodes = [VarDeclareNode(var_name=var_name, var_type=KW_STR) for var_name in declared_variables]
 
             else:
-                raise Exception(f"Expected KEYWORD: {TT_TYPE_I32} or 'string'. Received: '{self.current_tok}'")
+                raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
 
             if self.current_tok.type == TT_NEWLINE:
                 self.advance()
@@ -683,11 +699,11 @@ class Parser():
             return CallNode(node_to_call=var_access_node, arg_nodes=arg_nodes)
 
         
-        elif self.current_tok.matches(TT_KEYWORD, 'Print'):
+        elif self.current_tok.matches(TT_KEYWORD, KW_PRINT):
             self.advance() 
 
             if self.current_tok.type != TT_LPAREN:
-                raise Exception(f"Expected '(' after KEYWORD:Print. Received token: {self.current_tok}")
+                raise Exception(f"Expected '(' after KEYWORD:{KW_PRINT}. Received token: {self.current_tok}")
             self.advance() # Consumes '('
 
             expr = self.or_expr()
@@ -695,21 +711,21 @@ class Parser():
             # TODO: enable more than one arg into the Print
             
             if self.current_tok.type != TT_RPAREN:
-                raise Exception(f"Expected ')' after Print argument. Received token: {self.current_tok}")
+                raise Exception(f"Expected ')' after {KW_PRINT} argument. Received token: {self.current_tok}")
             self.advance() # Consumes ')'
 
             if self.current_tok.type != TT_NEWLINE:
                 raise Exception(f"Expected ';'. Received token: '{self.current_tok}'")
             self.advance() # Consumes ';'
 
-            print_node =  VarAccessNode('Print')
+            print_node =  VarAccessNode(KW_PRINT)
             return CallNode(print_node, [expr])
         
         elif self.current_tok.type == TT_NEWLINE:
             self.advance() # Consumes ';'
             return NoOpNode()
 
-        elif self.current_tok.matches(TT_KEYWORD, 'if'):
+        elif self.current_tok.matches(TT_KEYWORD, KW_IF):
             self.advance() 
             
             if self.current_tok.type != TT_LPAREN:
@@ -719,12 +735,12 @@ class Parser():
             condition = self.or_expr()
 
             if self.current_tok.type != TT_RPAREN:
-                raise Exception(f"Expected ')' after Print argument. Received token: {self.current_tok}")
+                raise Exception(f"Expected ')' after {KW_PRINT} argument. Received token: {self.current_tok}")
             self.advance() # Consumes ')'
 
             if_statement = self.statement()
 
-            if self.current_tok.matches(TT_KEYWORD, 'else'):
+            if self.current_tok.matches(TT_KEYWORD, KW_ELSE):
                 self.advance()
                 
                 # Check if else was passed empty
@@ -736,7 +752,7 @@ class Parser():
 
             return IfNode((condition, if_statement), )
 
-        elif self.current_tok.matches(TT_KEYWORD, 'while'):
+        elif self.current_tok.matches(TT_KEYWORD, KW_WHILE):
             self.advance() 
             
             if self.current_tok.type != TT_LPAREN:
@@ -753,7 +769,7 @@ class Parser():
 
             return WhileNode(condition_node, body_node)
 
-        elif self.current_tok.matches(TT_KEYWORD, 'return'):
+        elif self.current_tok.matches(TT_KEYWORD, KW_RETURN):
             self.advance()
             result = self.or_expr()
 
@@ -763,8 +779,8 @@ class Parser():
 
             return result
 
-        elif self.current_tok.type == TT_INT or self.current_tok.matches(TT_KEYWORD, 'else'):
-            raise Exception(f"Expected IDENTIFIER, Print, while, if, fn or return. Received: {self.current_tok}")
+        elif self.current_tok.type == TT_INT or self.current_tok.matches(TT_KEYWORD, KW_ELSE):
+            raise Exception(f"Expected IDENTIFIER, {KW_PRINT}, while, if, fn or return. Received: {self.current_tok}")
 
         else:
             return self.block()
@@ -860,7 +876,7 @@ class Parser():
             self.advance()
             return StringNode(str_tok)
 
-        elif self.current_tok.matches(TT_KEYWORD, 'Read'):
+        elif self.current_tok.matches(TT_KEYWORD, KW_READ):
             self.advance()
 
             if self.current_tok.type != TT_LPAREN:
@@ -871,7 +887,7 @@ class Parser():
                 raise Exception(f"Expected ')'. Received token: '{self.current_tok}'")
             self.advance() # To consume the ')'
 
-            read_node = VarAccessNode('Read')
+            read_node = VarAccessNode(KW_READ)
             return CallNode(read_node, [])
 
         raise Exception(f"Expected '(', '+', '-', '*', '/', INT, IDENTIFIER. Received token: '{self.current_tok}'")
@@ -1002,7 +1018,7 @@ class Number(Value):
         return self.value != 0
 
     def type(self):
-        return TT_TYPE_I32
+        return KW_I32
 
     def __repr__(self) -> str:
        return f'{int(self.value)}' #To return 0 and 1 instead of False and True (to pass tests)
@@ -1023,6 +1039,7 @@ class BaseFunction(Value):
 
         if len(args_) != expected_args_size:
             raise Exception(f"'{self.name}' expected {expected_args_size} args, but received {len(args_)}")
+
         for idx, arg in enumerate(args_):
             # Not so good fix (block is returning a List Node) REFACTOR TODO
             if type(arg) == List:
@@ -1063,7 +1080,7 @@ class Function(BaseFunction):
     def execute(self, args_):
         interpreter = Interpreter()
         exec_context = self.generate_new_context()
-        arg_types = [(TT_TYPE_I32,), (TT_TYPE_I32,)]
+        arg_types = [(KW_I32,), (KW_I32,)]
         self.check_and_populate_args(self.arg_names, arg_types, args_, exec_context) # TODO: passar o arg_types direito FIX IMPORTANT
         value = interpreter.visit(self.body_node, exec_context)
         return value
@@ -1110,7 +1127,7 @@ class BuiltInFunction(BaseFunction):
         return 0 # Number.null
 
     execute_print.arg_names = ['value']  # como não é passado nenhum arg_name (mas é passado um arg), pra evitar o erro self.populate_args
-    execute_print.arg_types = [('String', TT_TYPE_I32)] # Estamos preenchendo com esse 'value' simbólico (e também o type)
+    execute_print.arg_types = [(KW_STR, KW_I32)] # Estamos preenchendo com esse 'value' simbólico (e também o type)
 
     def execute_read(self, exec_context):
         read = input()
@@ -1230,6 +1247,7 @@ class Interpreter:
         func_to_call = self.visit(node.node_to_call, context)
         for arg_node in node.arg_nodes:
             args_.append(self.visit(arg_node, context))
+
         return func_to_call.execute(args_)
     
 
@@ -1242,7 +1260,7 @@ class Interpreter:
         # register function in symbol_table
         context.symbol_table.set(
                                 name=func_name,
-                                var_type=TT_TYPE_I32, # TODO usar o tipo de verdade IMPORTANT FIX
+                                var_type=KW_I32, # TODO usar o tipo de verdade IMPORTANT FIX
                                 value=func_value
                                 )
         return func_value
@@ -1269,10 +1287,6 @@ class Interpreter:
 ###########
 ### RUN ###
 ###########
-TRANSLATOR_DIC = {
-    'com' : '+',
-    'sem' : '-' 
-}
 
 def file_to_oneline(source_code):
     # Primeiro split em \n separa as linhas
@@ -1295,13 +1309,14 @@ def translate_code(code: str, conversion_dict: dict) -> str:
 
 def pre_process(code: str) -> str:
     code_one_string = file_to_oneline(code)
-    return translate_code(code_one_string, TRANSLATOR_DIC)
+    return code_one_string
+    #return translate_code(code_one_string, TRANSLATOR_DIC)
 
 global_symbol_table = SymbolTable()
-global_symbol_table.set(name='Read',  var_type=TT_TYPE_I32,  value=BuiltInFunction.read)
-global_symbol_table.set(name='Print', var_type='void', value=BuiltInFunction.print)
-global_symbol_table.set(name='True',  var_type=TT_TYPE_I32,  value=Number(1))
-global_symbol_table.set(name='False', var_type=TT_TYPE_I32,  value=Number(0))
+global_symbol_table.set(name=KW_READ,  var_type=KW_I32,  value=BuiltInFunction.read)
+global_symbol_table.set(name=KW_PRINT, var_type='void', value=BuiltInFunction.print)
+global_symbol_table.set(name='True',  var_type=KW_I32,  value=Number(1))
+global_symbol_table.set(name='False', var_type=KW_I32,  value=Number(0))
 
 
 def run(code: str) -> None:

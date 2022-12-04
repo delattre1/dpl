@@ -1,20 +1,7 @@
 TRANSLATOR_EBNF = {
-    'if'   : 'seForVerdade',
-    'else' : 'casoContrario',
-    '>='   : 'maiorIgual',
-    '<='   : 'menorIgual',
-    '>'    : 'ehMaisMaiorDeGrande',
-    '<'    : 'ehMaisPiquitiquinho',
-    '=='   : 'ehIgualzinho',
-    '"="'  : '"recebe"',
-    '+'    : 'soma',
-    '-'    : 'menas',
-    '*'    : 'vezes',
-    '/'    : 'dividido',
-    '&&'   : 'ee',
-    '||'   : 'ou',
-    '";"'  : '"cambioDesligo"',
-
+    # Keywords
+    'if'    : 'se',
+    'else'  : 'casoContrario',
     'print' : 'mostra',
     'while' : 'enquanto',
     'func'  : 'receita',
@@ -22,10 +9,24 @@ TRANSLATOR_EBNF = {
     'false' : 'mentira',
     'int'   : 'inteiro',
     'float' : 'pedaco',
-    'bool'  : 'simOuNao'
+    'bool'  : 'simOuNao',
+
+    # Operators (daqui pra baixo tá certo, arrumar ali pra cima ^)
+    '+'   : 'com'                   ,
+    '-'   : 'sem'                   ,
+    '*'   : 'multiplicadoPor'       ,
+    '/'   : 'divididoPor'           ,
+    '>'   : 'temMaisQue'            ,
+    '<'   : 'temMenosQue'           ,
+    '>='  : 'temMaisOuIgualA'       ,
+    '<='  : 'temMenosOuIgualA'      ,
+    '=='  : 'ehIgualzinho'          ,
+    '"="' : '"recebe"'              ,
+    '&&'  : 'EE'                    ,
+    '||'  : 'ouTalvez'              ,
 }
 
-
+# Antigo, mudar 
 TRANSLATOR_CODE = {
     'if'   : 'seForVerdade',
     'else' : 'casoContrario',
@@ -41,7 +42,6 @@ TRANSLATOR_CODE = {
     '/'    : 'dividido',
     '&&'   : 'ee',
     '||'   : 'ou',
-    ';'    : 'cambioDesligo',
 
     'print' : 'mostra',
     'while' : 'enquanto',

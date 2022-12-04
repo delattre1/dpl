@@ -1,9 +1,9 @@
 # EBNF
-menas (tipos básicos: variáveis, condicionais, loops e funções)
+sem (tipos básicos: variáveis, condicionais, loops e funções)
 
 ```python 
 BLOCK     = "{", {STATEMENT}, "}";
-STATEMENT = (λ | VARIABLE_DECLARATION | ASSIGNMENT | PRINT | IF | WHILE | BLOCK | FUNCCAL | FUNCDEF), "cambioDesligo";
+STATEMENT = (λ | VARIABLE_DECLARATION | ASSIGNMENT | PRINT | IF | WHILE | BLOCK | FUNCCAL | FUNCDEF), ";";
 
 FUNCDEF   = PARAM, "(", {PARAM ","}, ")", BLOCK;
 FUNCCALL  = IDENTIFIER, "(", {OREXPR ","}, ")";
@@ -17,16 +17,16 @@ ASSIGNMENT = IDENTIFIER, "recebe", EXPR ;
 PRINT      = "mostra", "(", EXPR, ")" ;
 WHILE      = "enquanto", "(", OREXPR, ")", STATEMENT;
 
-IF = "seForVerdade", "(", OREXPR, ")", STATEMENT |
-     "seForVerdade", "(", OREXPR, ")", STATEMENT, "casoContrario", STATEMENT;
+IF = "se", "(", OREXPR, ")", STATEMENT |
+     "se", "(", OREXPR, ")", STATEMENT, "casoContrario", STATEMENT;
 
-OREXPR  = ANDEXPR, {"ou",        ANDEXPR};
-ANDEXPR = EQEXPR,  {"ee",        EQEXPR};
+OREXPR  = ANDEXPR, {"ouTalvez",        ANDEXPR};
+ANDEXPR = EQEXPR,  {"EE",        EQEXPR};
 EQEXPR  = RELEXPR, {"ehIgualzinho",        RELEXPR};
-RELEXPR = EXPR,    {("ehMaisMaiorDeGrande" | "ehMaisPiquitiquinho"), EXPR};
-EXPR    = TERM,    {("soma" | "menas"), TERM};
-TERM    = FACTOR,  {("vezes" | "dividido"), FACTOR};
-FACTOR  = (("soma" | "menas"), FACTOR) | NUMBER | BOOL_VALUE | STRING_VALUE | "(", EXPR, ")" | IDENTIFIER;
+RELEXPR = EXPR,    {("temMaisQue" | "temMenosQue"), EXPR};
+EXPR    = TERM,    {("com" | "sem"), TERM};
+TERM    = FACTOR,  {("multiplicadoPor" | "divididoPor"), FACTOR};
+FACTOR  = (("com" | "sem"), FACTOR) | NUMBER | BOOL_VALUE | STRING_VALUE | "(", EXPR, ")" | IDENTIFIER;
 
 IDENTIFIER   = LETTER, {LETTER | DIGIT | "_"};
 NUMBER       = DIGIT, {DIGIT};
