@@ -1,3 +1,16 @@
+## Objetivos
+1. Criar uma Linguagem de Programação.
+2. A linguagem deve ter todas as estruturas básicas de uma linguagem de programação: variáveis, condicionais, loops e funções.
+
+## Tarefas:
+- Atividade Prática Supervisionada (estimativa de esforço de 20h).
+1. Estruturar a linguagem segundo o padrão EBNF.
+2. Utilizar as ferramentas Flex e Bison (ou semelhantes) para realizar as etapas de Análise Léxica e Sintática.
+3. Utilizar a LLVM (ou semelhantes - incluindo o próprio compilador) para implementar a sua linguagem até a fase final de compilação. Não é preciso implementar um compilador novo.
+4. Criar um exemplo de testes que demonstre as características da sua Linguagem.
+5. Fazer uma apresentação com slides apresentando sua linguagem (Motivação, Características, Curiosidades e Exemplos).
+
+
 # EBNF
 - (tipos básicos: variáveis, condicionais, loops e funções)
 
@@ -58,3 +71,10 @@ Code example:
     mostra(contador) cambioDesligo
     
 ```
+
+
+# Idea:
+
+To create a program in this language, all variables must be represented by fruit names (in portuguese) or by some cooking ingredients. If you use more than 5 variables that doenst follow this rule, your program will crash.
+
+Example of allowed 
