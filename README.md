@@ -20,14 +20,14 @@ DECLARATION = "receita", IDENTIFIER, "(", { PARAM, { "," , PARAM } } ")", { "->"
 BLOCK       = "{", {STATEMENT}, "}" ;
 
 # Statement
-STATEMENT   = ( λ | RETURN | PRINT | WHILE | IF | BLOCK | VAR_DEC | VAR_ASSIGN | FUNC_CALL ), ";" ;
-RETURN = "resultado", STATEMENT ; 
+STATEMENT  = ( λ | RETURN | PRINT | WHILE | IF | BLOCK | VAR_DEC | VAR_ASSIGN | FUNC_CALL ), ";" ;
+RETURN     = "resultado", STATEMENT ; 
 PRINT      = "mostra", "(", OREXPR, ")" ;
 WHILE      = "enquanto", "(", OREXPR, ")", STATEMENT ;
-IF = "se", "(", OREXPR, ")", STATEMENT { "casoContrario", STATEMENT } ;
-VAR_DEC = "ingrediente", IDENTIFIER, { "," IDENTIFIER } ":", TYPE { "recebe", OREXPR, { ",", OREXPR } } 
+IF         = "se", "(", OREXPR, ")", STATEMENT { "casoContrario", STATEMENT } ;
+VAR_DEC    = "ingrediente", IDENTIFIER, { "," IDENTIFIER } ":", TYPE { "recebe", OREXPR, { ",", OREXPR } } 
 VAR_ASSIGN = IDENTIFIER, "recebe", OREXPR
-FUNC_CALL = IDENTIFIER, "(", { OREXPR, "," }, ")"
+FUNC_CALL  = IDENTIFIER, "(", { OREXPR, "," }, ")"
 
 # Factor
 OREXPR  = ANDEXPR, {"ouTalvez",     ANDEXPR} ;
@@ -54,7 +54,21 @@ DIGIT  = (1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0 ) ;
 ```
 
 
-### Valid "fruit" or related words:
+# About the language:
+
+This language is designed to create fruit salads, desserts with fruits, juices... Anything that you can do with fruit.
+
+That being said:
+
+- In your program all your **variables and function names** must be named after a fruit. 
+- The name of the fruit should be represented in **Portuguese** 
+- All the accentuation must be removed. 
+- For composite fruit names, we assumed CamelCase naming convention.
+- You are only allowed to create *variables and functions* with names that doens't follow the above rules 5 times.
+- If you use different names, more times than the limit, your program will **crash**.
+
+
+## Here you can check all the fruit names and other allowed words:
 
 ```python
 FRUITS = {
@@ -87,6 +101,8 @@ MIX = { 'leite', 'acucar', 'sal', 'agua', 'manteiga', 'leiteCondensado' }
 FUNCTIONS = { 'Main', 'mistura', 'tempera', 'junta' }
 ```
 
+# Here are a few examples of programs that run without error
+
 Code example:
 ```python
 
@@ -106,10 +122,3 @@ Code example:
     mostra(contador) cambioDesligo
     
 ```
-
-
-# Idea:
-
-To create a program in this language, all variables must be represented by fruit names (in portuguese) or by some cooking ingredients. If you use more than 5 variables that doenst follow this rule, your program will crash.
-
-Example of allowed 
