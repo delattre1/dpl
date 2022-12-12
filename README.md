@@ -136,6 +136,38 @@ Output
 >> Muito bom, a vitaminha ficou uma delícia!
 ```
 
+```python
+receita Main() {
+    ingrediente banana, acucar, leite, abacate : inteiro;
+    ingrediente copo : inteiro;
+    ingredientes invalidName1, invalidName2, invalidName3, invalidName4, invalidName5, invalidName6: inteiro;
+
+    mostra("Esse programa não deve rodar, pois tem mais variáveis com nome invalidos, do que o permitido");
+}
+
+receita fazBolo(i1: inteiro, i2: inteiro, i3: inteiro, i4: inteiro) -> inteiro {
+    resultado return i1 com i2 sem (i3 multiplicadoPor i4);
+}
+```
+
+- Example of invalid program: using more than 10 variables with not allowed names:
+Output
+```bash
+╰─ python3 main.py t3.fruit                                                                                             ─╯
+Traceback (most recent call last):
+  File "/home/daniel/Desktop/Insper/logcomp/dpl/main.py", line 1363, in <module>
+    main()
+  File "/home/daniel/Desktop/Insper/logcomp/dpl/main.py", line 1360, in main
+    res = run(source_code)
+  File "/home/daniel/Desktop/Insper/logcomp/dpl/main.py", line 1338, in run
+    tokens = lexer.make_tokens()
+  File "/home/daniel/Desktop/Insper/logcomp/dpl/main.py", line 215, in make_tokens
+    tokens.append(self.make_keyword_or_identifier())
+  File "/home/daniel/Desktop/Insper/logcomp/dpl/main.py", line 174, in make_keyword_or_identifier
+    raise Exception(f"More than {self.MAX_ALLOWED_DIFFERENT_VARIABLES} were found in the source code.\nVars: {self.not_allowed_name_ocurrences}")
+Exception: More than 10 were found in the source code.
+Vars: {'ingredientes', 'invalidName6', 'i1', 'invalidName1', 'invalidName3', 'invalidName5', 'fazBolo', 'invalidName4', 'copo', 'invalidName2'}
+```
 
 - Crazy example to verify all operations:
 
