@@ -64,7 +64,7 @@ That being said:
 - The name of the fruit should be represented in **Portuguese** 
 - All the accentuation must be removed. 
 - For composite fruit names, we assumed CamelCase naming convention.
-- You are only allowed to create *variables and functions* with names that doens't follow the above rules 5 times.
+- You are only allowed to create *variables and functions* with names that doesn't follow the above rules 5 times.
 - If you use different names, more times than the limit, your program will **crash**.
 
 
