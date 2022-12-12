@@ -105,20 +105,34 @@ FUNCTIONS = { 'Main', 'mistura', 'tempera', 'junta' }
 
 Code example:
 ```python
+receita Main() {
+    ingrediente banana, acucar, leite, abacate : inteiro;
+    ingrediente copo : inteiro;
 
-    # Func 1
+    acucar  recebe 200;
+    banana  recebe 100;
+    leite   recebe 200;
+    abacate recebe 100;
 
-    a recebe 'hello world' cambioDesligo
-    seForVerdade (a ehIgualzinho '123') {
-        mostra('Acertou') cambioDesligo
+    copo recebe fazVitamina(banana, acucar, leite, abacate);
+
+    se (copo temMaisQue 600) {
+        mostra("Deu ruim, tinha mais vitamina do que o limite do liquitificador!");
     }
     casoContrario {
-        mostra('Errou') cambioDesligo
+        mostra("Muito bom, a vitaminha ficou uma delícia!");
     }
+}
 
-    contador recebe 0 cambioDesligo
-    enquanto (verdadeVerdadeira):
-        contador recebe contador soma 1cambioDesligo
-    mostra(contador) cambioDesligo
-    
+receita fazVitamina(i1: inteiro, i2: inteiro, i3: inteiro, i4: inteiro) -> inteiro {
+    resultado (i1 com i2 com i3 com i4);
+}
 ```
+
+Output
+```bash
+╰─ python3 main.py t2.jl
+>> Muito bom, a vitaminha ficou uma delícia!
+```
+
+
