@@ -101,9 +101,9 @@ MIX = { 'leite', 'acucar', 'sal', 'agua', 'manteiga', 'leiteCondensado' }
 FUNCTIONS = { 'Main', 'mistura', 'tempera', 'junta' }
 ```
 
-# Here are a few examples of programs that run without error
+# Code examples 
 
-- Code example:
+- Code that run without any problem:
 ```python
 // t2.fruit
 receita Main() {
@@ -136,6 +136,7 @@ Output
 >> Muito bom, a vitaminha ficou uma delícia!
 ```
 
+- Example of invalid program: using more than 10 variables with not allowed names:
 ```python
 receita Main() {
     ingrediente banana, acucar, leite, abacate : inteiro;
@@ -150,7 +151,6 @@ receita fazBolo(i1: inteiro, i2: inteiro, i3: inteiro, i4: inteiro) -> inteiro {
 }
 ```
 
-- Example of invalid program: using more than 10 variables with not allowed names:
 Output
 ```bash
 ╰─ python3 main.py t3.fruit                                                                                             ─╯
