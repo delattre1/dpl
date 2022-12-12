@@ -103,8 +103,9 @@ FUNCTIONS = { 'Main', 'mistura', 'tempera', 'junta' }
 
 # Here are a few examples of programs that run without error
 
-Code example:
+- Code example:
 ```python
+// t2.fruit
 receita Main() {
     ingrediente banana, acucar, leite, abacate : inteiro;
     ingrediente copo : inteiro;
@@ -131,8 +132,96 @@ receita fazVitamina(i1: inteiro, i2: inteiro, i3: inteiro, i4: inteiro) -> intei
 
 Output
 ```bash
-╰─ python3 main.py t2.jl
+╰─ python3 main.py t2.fruit
 >> Muito bom, a vitaminha ficou uma delícia!
 ```
+
+
+- Crazy example to verify all operations:
+
+```python
+receita Main() {
+  // All bool and int operations
+  ingrediente uva, limao : inteiro;
+
+  ingrediente copo1, copo2 : inteiro;
+  ingrediente conclusao : texto;
+
+  conclusao recebe "Agua com limao é bom";
+
+  uva recebe 99;
+  limao recebe (uva ehIgualzinho 99);
+
+  mostra(uva);
+  mostra(limao);
+
+  mostra(uva com limao); // 100
+  mostra(uva sem limao); // 98
+  mostra(uva multiplicadoPor limao);
+  mostra(uva divididoPor limao);
+  mostra(uva ehIgualzinho limao);
+  mostra(uva temMenosQue limao);
+  mostra(uva temMaisQue limao);
+  mostra(conclusao);
+
+  copo1 recebe 0;
+  copo2 recebe 10;
+
+  enquanto (copo1 temMenosQue copo2) {
+    mostra(copo1);
+    copo1 recebe copo1 com 1;
+  }
+
+  ingrediente laranja : inteiro;
+  laranja recebe entrada();
+
+  se (laranja temMaisQue 10) {
+    mostra("Laranja > 10. Bolo de banana:");
+    mostra(boloDeBanana(10));
+  }
+
+  casoContrario {
+    mostra("Laranja < 10. Salada de frutas:");
+    mostra(saladaDeFrutas(70, 7));
+  }
+}
+
+receita boloDeBanana(banana: inteiro) -> inteiro {
+  resultado 8000;
+}
+
+receita saladaDeFrutas(banana: inteiro, maca: inteiro) -> inteiro {
+  resultado banana com maca;
+}
+```
+
+Output
+```bash
+╰─ python3 main.py t1.fruit
+>> 99
+   1
+   100
+   98
+   99
+   99
+   0
+   0
+   1
+   Agua com limao é bom
+   0
+   1
+   2
+   3
+   4
+   5
+   6
+   7
+   8
+   9
+   300
+   Laranja > 10. Bolo de banana:
+   8000
+```
+
 
 
