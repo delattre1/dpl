@@ -1,0 +1,11 @@
+receita Main() {
+    ingrediente banana, acucar, leite, abacate : inteiro;
+    ingrediente copo : inteiro;
+    ingredientes invalidName1, invalidName2, invalidName3, invalidName4, invalidName5, invalidName6: inteiro;
+
+    mostra("Esse programa não deve rodar, pois tem mais variáveis com nome invalidos, do que o permitido");
+}
+
+receita fazBolo(i1: inteiro, i2: inteiro, i3: inteiro, i4: inteiro) -> inteiro {
+    resultado return i1 com i2 sem (i3 multiplicadoPor i4);
+}
