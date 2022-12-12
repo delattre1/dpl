@@ -40,8 +40,8 @@ TT_ARROW      = 'ARROW'
 
 
 # FRUITS LANGUAGE 
-KW_I32  = 'i32'
-KW_STR  = 'String'
+KW_I32  = 'inteiro'
+KW_STR  = 'texto'
 KW_VAR  = 'ingrediente'
 KW_READ = 'entrada'
 KW_IF   = 'se'
@@ -105,7 +105,7 @@ class Lexer:
         self.advance()
         self.not_allowed_name_ocurrences = set()
         self.ALLOWED_NAMES = ALLOWED_VAR_NAMES 
-        self.MAX_ALLOWED_DIFFERENT_VARIABLES = 5
+        self.MAX_ALLOWED_DIFFERENT_VARIABLES = 10
 
     def advance(self) -> None:
         '''lê o próximo token e atualiza o atributo next'''
@@ -174,7 +174,7 @@ class Lexer:
                     raise Exception(f"More than {self.MAX_ALLOWED_DIFFERENT_VARIABLES} were found in the source code.\nVars: {self.not_allowed_name_ocurrences}")
 
                 self.not_allowed_name_ocurrences.add(id_str)
-                print(f'One more variable called: {id_str} was found in the Lexer. Current count: {len(self.not_allowed_name_ocurrences)}')
+                #print(f'One more variable called: {id_str} was found in the Lexer. Current count: {len(self.not_allowed_name_ocurrences)}')
 
         return Token(tok_type, id_str)
 
@@ -366,9 +366,10 @@ class WhileNode:
         return f'while: ({self.condition_node} else: {self.body_node}'
 
 class FuncDefNode:
-    def __init__(self, var_name_tok, arg_name_toks, body_node):
+    def __init__(self, var_name_tok, arg_name_toks, arg_name_types, body_node):
         self.var_name_tok = var_name_tok
         self.arg_name_toks = arg_name_toks
+        self.arg_name_types = arg_name_types
         self.body_node = body_node
 
     def __repr__(self):
@@ -492,7 +493,8 @@ class Parser():
             raise Exception(f"Expected '(' after function definition name. Received token: {self.current_tok}")
         self.advance() # Consumes '('
 
-        arg_name_toks = []
+        arg_name_toks  = []
+        arg_name_types = []
 
         if self.current_tok.type == TT_IDENTIFIER:
             arg_name_toks.append(self.current_tok)
@@ -504,8 +506,8 @@ class Parser():
             self.advance()
 
             if not (self.current_tok.matches(TT_KEYWORD, KW_I32) or self.current_tok.matches(TT_KEYWORD, KW_STR)):
-                raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
-            # self.current_tok.value 
+                raise Exception(f"Expected KEYWORD: '{KW_I32}' or '{KW_STR}'. Received: '{self.current_tok}'")
+            arg_name_types.append(self.current_tok)
             # TODO TYPE HANDLER
             self.advance()
 
@@ -524,7 +526,8 @@ class Parser():
                 self.advance()
 
                 if not (self.current_tok.matches(TT_KEYWORD, KW_I32) or self.current_tok.matches(TT_KEYWORD, KW_STR)):
-                    raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
+                    raise Exception(f"Expected KEYWORD: {KW_I32} or '{KW_STR}'. Received: '{self.current_tok}'")
+                arg_name_types.append(self.current_tok)
                 # self.current_tok.value 
                 # TODO TYPE HANDLER
                 self.advance()
@@ -542,7 +545,7 @@ class Parser():
             self.advance() # Consumes '->'
             # Get function type
             if not (self.current_tok.matches(TT_KEYWORD, KW_I32) or self.current_tok.matches(TT_KEYWORD, KW_STR)):
-                raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
+                raise Exception(f"Expected KEYWORD: {KW_I32} or '{KW_STR}'. Received: '{self.current_tok}'")
         
             function_return_type = self.current_tok.value 
             self.advance()
@@ -554,6 +557,7 @@ class Parser():
         return FuncDefNode(
             var_name_tok=function_name_tok,
             arg_name_toks=arg_name_toks,
+            arg_name_types=arg_name_types,
             body_node=node_to_return
             )
 
@@ -614,7 +618,7 @@ class Parser():
                 var_dec_nodes = [VarDeclareNode(var_name=var_name, var_type=KW_STR) for var_name in declared_variables]
 
             else:
-                raise Exception(f"Expected KEYWORD: {KW_I32} or 'string'. Received: '{self.current_tok}'")
+                raise Exception(f"Expected KEYWORD: {KW_I32} or '{KW_STR}'. Received: '{self.current_tok}'")
 
             if self.current_tok.type == TT_NEWLINE:
                 self.advance()
@@ -945,7 +949,7 @@ class String(Value):
         return Number(len(self.value) > len(other.value)) # TODO: replace '<=' for '<'. (is '<=' only to pass the tests)
 
     def type(self):
-        return 'String'
+        return KW_STR
     
     def __repr__(self):
         return self.value
@@ -1072,16 +1076,16 @@ class BaseFunction(Value):
 
 
 class Function(BaseFunction):
-    def __init__(self, name, body_node, arg_names):
+    def __init__(self, name, body_node, arg_names, arg_types):
         super().__init__(name)
         self.body_node = body_node
         self.arg_names = arg_names
+        self.arg_types = arg_types
 
     def execute(self, args_):
         interpreter = Interpreter()
         exec_context = self.generate_new_context()
-        arg_types = [(KW_I32,), (KW_I32,)]
-        self.check_and_populate_args(self.arg_names, arg_types, args_, exec_context) # TODO: passar o arg_types direito FIX IMPORTANT
+        self.check_and_populate_args(self.arg_names, self.arg_types, args_, exec_context) # TODO: passar o arg_types direito FIX IMPORTANT
         value = interpreter.visit(self.body_node, exec_context)
         return value
 
@@ -1255,7 +1259,8 @@ class Interpreter:
         func_name = node.var_name_tok.value 
         body_node = node.body_node
         arg_names = [arg_name.value for arg_name in node.arg_name_toks]
-        func_value = Function(func_name, body_node, arg_names).set_context(context)
+        arg_types = [(arg_type.value,) for arg_type in node.arg_name_types] # Transforming in tuple, because in the "check_args" we support more than one type
+        func_value = Function(func_name, body_node, arg_names, arg_types).set_context(context)
 
         # register function in symbol_table
         context.symbol_table.set(
